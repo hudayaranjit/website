@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabaseClient';
+import { calculateAIPriority, calculateWaitTime } from './aiEngine';
 
 // Helper functions to map snake_case (Database) to camelCase (React UI)
 const mapPatient = (p) => ({
@@ -139,6 +140,12 @@ export const useStore = create((set, get) => ({
         }
       }
 
+      // Run the AI Triage Engine
+      const aiResult = calculateAIPriority({
+        ...patientData,
+        arrivalTime: new Date().toISOString()
+      });
+
       // Map JS camelCase back to DB snake_case
       const dbData = {
         id: `pat-${Date.now()}`,
@@ -151,8 +158,9 @@ export const useStore = create((set, get) => ({
         visit_type: patientData.visitType || 'new',
         department: patientData.department,
         appointment_type: patientData.appointmentType || 'walk-in',
-        priority_level: patientData.priorityLevel || 'Medium',
-        priority_score: patientData.priorityLevel === 'Critical' ? 100 : (patientData.priorityLevel === 'High' ? 80 : 50),
+        priority_level: aiResult.level,
+        priority_score: aiResult.score,
+        ai_explanation: aiResult.explanation,
         status: 'waiting',
         assigned_doctor_id: assignedDocId || null
       };
