@@ -103,9 +103,27 @@ def calculate_ai_priority(patient: Patient) -> dict:
         reasons.append('Senior citizen priority')
 
     symptoms_lower = patient.symptoms.lower()
-    high_risk_kws = ['chest pain', 'breathing', 'bleeding', 'unconscious', 'seizure', 'severe pain']
-    med_risk_kws = ['fever', 'fracture', 'headache', 'vomiting', 'dizzy', 'infection']
-    low_risk_kws = ['rash', 'checkup', 'follow-up', 'cough', 'cold', 'sore throat']
+    high_risk_kws = [
+        'chest pain', 'breathing', 'bleeding', 'unconscious', 'seizure', 'severe pain',
+        'stroke', 'heart attack', 'paralysis', 'nervous system changes', 'anaphylaxis', 'choking',
+        'poisoning', 'suicidal', 'gunshot', 'stabbing', 'coma', 'loss of consciousness',
+        'extreme fatigue', 'shortness of breath', 'difficulty breathing', 'chest pressure',
+        'confusion', 'slurred speech', 'facial drooping', 'head trauma', 'severe burn',
+        'coughing blood', 'vomiting blood', 'sudden weakness', 'unresponsive', 'cardiac arrest'
+    ]
+    med_risk_kws = [
+        'fever', 'fracture', 'headache', 'vomiting', 'dizzy', 'infection', 'swelling',
+        'abdominal pain', 'burn', 'dislocation', 'laceration', 'asthma', 'dehydration',
+        'allergic reaction', 'migraine', 'vision changes', 'palpitations', 'kidney stone',
+        'appendicitis', 'concussion', 'extreme pain', 'blood in urine', 'fainting',
+        'skin changes', 'numbness', 'tingling', 'severe diarrhea', 'wheezing'
+    ]
+    low_risk_kws = [
+        'rash', 'checkup', 'follow-up', 'cough', 'cold', 'sore throat', 'runny nose',
+        'mild pain', 'sprain', 'minor cut', 'bruise', 'toothache', 'earache',
+        'back pain', 'joint pain', 'muscle ache', 'itchy', 'mild fever', 'congestion',
+        'indigestion', 'heartburn', 'fatigue', 'acne', 'routine', 'prescription renewal'
+    ]
 
     matched_high = False
     matched_med = False

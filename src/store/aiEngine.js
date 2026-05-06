@@ -31,9 +31,27 @@ export const calculateAIPriority = (patient) => {
   // 3. Symptom Keyword Matching (Very basic NLP simulation)
   const symptomsLower = patient.symptoms.toLowerCase();
   
-  const highRiskKeywords = ['chest pain', 'breathing', 'bleeding', 'unconscious', 'seizure', 'severe pain'];
-  const mediumRiskKeywords = ['fever', 'fracture', 'headache', 'vomiting', 'dizzy', 'infection'];
-  const lowRiskKeywords = ['rash', 'checkup', 'follow-up', 'cough', 'cold', 'sore throat'];
+  const highRiskKeywords = [
+    'chest pain', 'breathing', 'bleeding', 'unconscious', 'seizure', 'severe pain',
+    'stroke', 'heart attack', 'paralysis', 'nervous system changes', 'anaphylaxis', 'choking',
+    'poisoning', 'suicidal', 'gunshot', 'stabbing', 'coma', 'loss of consciousness',
+    'extreme fatigue', 'shortness of breath', 'difficulty breathing', 'chest pressure',
+    'confusion', 'slurred speech', 'facial drooping', 'head trauma', 'severe burn',
+    'coughing blood', 'vomiting blood', 'sudden weakness', 'unresponsive', 'cardiac arrest'
+  ];
+  const mediumRiskKeywords = [
+    'fever', 'fracture', 'headache', 'vomiting', 'dizzy', 'infection', 'swelling',
+    'abdominal pain', 'burn', 'dislocation', 'laceration', 'asthma', 'dehydration',
+    'allergic reaction', 'migraine', 'vision changes', 'palpitations', 'kidney stone',
+    'appendicitis', 'concussion', 'extreme pain', 'blood in urine', 'fainting',
+    'skin changes', 'numbness', 'tingling', 'severe diarrhea', 'wheezing'
+  ];
+  const lowRiskKeywords = [
+    'rash', 'checkup', 'follow-up', 'cough', 'cold', 'sore throat', 'runny nose',
+    'mild pain', 'sprain', 'minor cut', 'bruise', 'toothache', 'earache',
+    'back pain', 'joint pain', 'muscle ache', 'itchy', 'mild fever', 'congestion',
+    'indigestion', 'heartburn', 'fatigue', 'acne', 'routine', 'prescription renewal'
+  ];
 
   let matchedHigh = false;
   let matchedMedium = false;
