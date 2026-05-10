@@ -55,49 +55,49 @@ const AdminDashboard = () => {
       {/* KPI Section */}
       <div className="kpi-grid">
         {/* Total Patients */}
-        <div className="card kpi-card">
-          <div className="kpi-icon" style={{ background: 'rgba(59,130,246,0.12)', color: 'var(--primary)' }}>
-            <Users size={22} />
+        <div className="glass-card kpi-card">
+          <div className="kpi-icon-wrapper" style={{ color: 'var(--primary-electric-blue)' }}>
+            <Users size={24} />
           </div>
           <div className="kpi-content">
-            <h4>Total Patients</h4>
+            <h4 className="kpi-label">Total Patients</h4>
             <div className="kpi-value">{totalToday}</div>
           </div>
         </div>
         {/* Waiting */}
-        <div className="card kpi-card">
-          <div className="kpi-icon" style={{ background: 'rgba(249,115,22,0.12)', color: 'var(--high)' }}>
-            <Clock size={22} />
+        <div className="glass-card kpi-card">
+          <div className="kpi-icon-wrapper" style={{ color: 'var(--status-high)' }}>
+            <Clock size={24} />
           </div>
           <div className="kpi-content">
-            <h4>In Waiting Room</h4>
-            <div className="kpi-value" style={{ color: 'var(--high)' }}>{waitingPatients}</div>
+            <h4 className="kpi-label">In Waiting Room</h4>
+            <div className="kpi-value" style={{ color: 'var(--status-high)' }}>{waitingPatients}</div>
           </div>
         </div>
         {/* Avg Wait */}
-        <div className="card kpi-card">
-          <div className="kpi-icon" style={{ background: 'rgba(168,85,247,0.12)', color: '#a855f7' }}>
-            <TrendingUp size={22} />
+        <div className="glass-card kpi-card">
+          <div className="kpi-icon-wrapper" style={{ color: '#a855f7' }}>
+            <TrendingUp size={24} />
           </div>
           <div className="kpi-content">
-            <h4>Avg Wait Time</h4>
+            <h4 className="kpi-label">Avg Wait Time</h4>
             <div className="kpi-value" style={{ color: '#a855f7' }}>{avgWaitTime}<span style={{ fontSize: '1rem', fontWeight: '500', color: 'var(--text-muted)' }}>m</span></div>
           </div>
         </div>
         {/* Emergencies */}
-        <div className="card kpi-card" style={emergencies > 0 ? { borderColor: 'var(--critical-border)', background: 'rgba(239,68,68,0.04)' } : {}}>
-          <div className="kpi-icon" style={{ background: 'var(--critical-bg)', color: 'var(--critical)' }}>
-            <AlertTriangle size={22} />
+        <div className="glass-card kpi-card" style={emergencies > 0 ? { borderColor: 'rgba(239,68,68,0.3)', boxShadow: '0 0 15px rgba(239,68,68,0.1)' } : {}}>
+          <div className="kpi-icon-wrapper" style={{ color: 'var(--status-critical)' }}>
+            <AlertTriangle size={24} />
           </div>
           <div className="kpi-content">
-            <h4 style={emergencies > 0 ? { color: 'var(--critical)' } : {}}>Emergencies</h4>
-            <div className="kpi-value" style={{ color: emergencies > 0 ? 'var(--critical)' : 'inherit' }}>{emergencies}</div>
+            <h4 className="kpi-label" style={emergencies > 0 ? { color: 'var(--status-critical)' } : {}}>Emergencies</h4>
+            <div className="kpi-value" style={{ color: emergencies > 0 ? 'var(--status-critical)' : 'inherit' }}>{emergencies}</div>
           </div>
         </div>
       </div>
 
       {/* Priority Queue Table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
         {/* Table Header */}
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -111,8 +111,8 @@ const AdminDashboard = () => {
         </div>
 
         {/* Table */}
-        <div style={{ overflowX: 'auto' }}>
-          <table className="data-table">
+        <div className="glass-table-wrapper">
+          <table className="glass-table">
             <thead>
               <tr>
                 <th style={{ paddingLeft: '1.5rem' }}>Token</th>
@@ -165,8 +165,8 @@ const AdminDashboard = () => {
                     </span>
                   </td>
                   <td style={{ textAlign: 'right', paddingRight: '1.5rem' }}>
-                    <button className="btn btn-secondary" style={{ fontSize: '0.75rem', padding: '0.3rem 0.7rem' }} onClick={() => handleEditClick(p)}>
-                      <Edit2 size={12} /> Edit
+                    <button className="btn-glass" onClick={() => handleEditClick(p)}>
+                      <Edit2 size={14} /> Edit
                     </button>
                   </td>
                 </tr>
