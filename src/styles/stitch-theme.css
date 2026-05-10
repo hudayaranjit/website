@@ -1,18 +1,16 @@
 :root {
-  /* Colors */
-  --bg-deep-navy: #0A0F1E;
-  --primary-electric-blue: #3B82F6;
-  --text-primary: #F1F5F9;
-  --text-muted: #94A3B8;
+  /* Override App.css Colors for Stitch Premium Dark Glassmorphism */
+  --bg-base: #0A0F1E;
+  --bg-surface: rgba(10, 15, 30, 0.6);
+  --bg-card: rgba(255, 255, 255, 0.03);
   
-  /* Status Colors */
-  --status-critical: #EF4444; /* Red */
-  --status-high: #F97316;     /* Orange */
-  --status-medium: #EAB308;   /* Yellow */
-  --status-low: #22C55E;      /* Green */
-  --status-done: #64748B;     /* Gray */
+  --primary-electric-blue: #3B82F6;
+  --status-critical: #EF4444; 
+  --status-high: #F97316;     
+  --status-medium: #EAB308;   
+  --status-low: #22C55E;      
+  --status-done: #64748B;     
 
-  /* Glassmorphism Surfaces */
   --glass-surface-bg: rgba(255, 255, 255, 0.03);
   --glass-surface-border: rgba(255, 255, 255, 0.08);
   --glass-floating-bg: rgba(255, 255, 255, 0.08);
@@ -20,11 +18,30 @@
 }
 
 body {
-  background-color: var(--bg-deep-navy);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-base);
+}
+
+/* Make existing layout components glassmorphic */
+.sidebar, .top-header {
+  background: var(--bg-surface) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-color: var(--glass-surface-border) !important;
+}
+
+.sidebar-logo-text strong {
+  background: linear-gradient(135deg, #fff 0%, #3B82F6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.nav-link.active {
+  background: rgba(59, 130, 246, 0.15) !important;
+  box-shadow: inset 3px 0 0 var(--primary-electric-blue), 0 0 15px rgba(59, 130, 246, 0.1) !important;
+}
+
+.nav-link.active::before {
+  display: none; /* replaced by box-shadow inset */
 }
 
 /* Glass Card */
@@ -42,54 +59,8 @@ body {
 .glass-card:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.15);
-}
-
-/* Typography */
-h1, h2, h3, h4 {
-  color: var(--text-primary);
-  margin-top: 0;
-  font-weight: 600;
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-/* KPI Grid */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.kpi-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.kpi-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--glass-floating-bg);
-  border: 1px solid var(--glass-floating-border);
-}
-
-.kpi-value {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 4px 0 0 0;
-}
-
-.kpi-label {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin: 0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Data Table */
@@ -122,8 +93,33 @@ h1, h2, h3, h4 {
   vertical-align: middle;
 }
 
+.glass-table tr {
+  transition: background 0.2s ease;
+}
+
 .glass-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Buttons */
+.btn-glass {
+  background: var(--glass-floating-bg);
+  border: 1px solid var(--glass-floating-border);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* Badges */
@@ -163,58 +159,43 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
-/* Buttons */
-.btn-glass {
+/* Custom layout spacing for AdminDashboard */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.kpi-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
-  color: var(--text-primary);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
 }
 
-.btn-glass:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+.kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+  line-height: 1;
 }
 
-.btn-primary-glow {
-  background: var(--primary-electric-blue);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-  transition: all 0.2s;
-}
-
-.btn-primary-glow:hover {
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
-  transform: translateY(-1px);
-}
-
-/* Inputs */
-.glass-input {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--glass-surface-border);
-  color: var(--text-primary);
-  padding: 10px 14px;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-.glass-input:focus {
-  outline: none;
-  border-color: var(--primary-electric-blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+.kpi-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
 }

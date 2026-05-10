@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useStore } from './store/store';
+import './styles/components.css';
 import './styles/stitch-theme.css';
 import { Sidebar } from './components/Sidebar';
 import { TopHeader } from './components/TopHeader';
@@ -57,4 +58,5 @@ function App() {
 }
 
 export default App;
+
 
