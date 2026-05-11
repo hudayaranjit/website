@@ -72,9 +72,12 @@ export const useStore = create((set, get) => ({
       const departments = ['General Medicine', 'Cardiology', 'Orthopedics', 'Pediatrics', 'Dermatology', 'Neurology', 'Emergency'];
       
       const doctors = doctorsData ? doctorsData.map(mapDoctor) : [];
-      const patients = patientsData ? patientsData.map(mapPatient) : [];
-      
-      set({ departments, doctors, patients });
+      set({ departments, doctors });
+
+      // After doctors are set, we can refresh the queue to calculate wait times
+      if (patientsData) {
+        get().refreshQueue();
+      }
 
       // Initialize real-time listeners once
       if (!get().subscriptionsSet) {
@@ -85,6 +88,7 @@ export const useStore = create((set, get) => ({
       console.error("Failed to fetch initial data", e);
     }
   },
+
 
   // --- Auth Actions ---
   login: (role, id = null) => set({ currentUserRole: role, currentUserId: id }),
@@ -108,23 +112,53 @@ export const useStore = create((set, get) => ({
     try {
       const { data: patientsData } = await supabase.from('patients').select('*').order('priority_score', { ascending: false });
       if (patientsData) {
-        set({ patients: patientsData.map(mapPatient) });
+        const doctors = get().doctors;
+        const mappedPatients = patientsData.map(mapPatient);
+        
+        // Calculate estimated wait time for each patient based on their doctor's queue
+        const updatedPatients = mappedPatients.map(p => {
+          if (p.status !== 'waiting') return p;
+          
+          const doctor = doctors.find(d => d.id === p.assignedDoctorId);
+          const doctorAvgTime = doctor?.avgConsultTime || 15; // fallback to 15m
+          
+          // Filter the sorted queue for this doctor and only those who are waiting
+          const doctorQueue = mappedPatients.filter(dp => 
+            dp.assignedDoctorId === p.assignedDoctorId && 
+            dp.status === 'waiting'
+          );
+          
+          // Check if the doctor is currently busy with a consultation
+          const isBusy = mappedPatients.some(dp => 
+            dp.assignedDoctorId === p.assignedDoctorId && 
+            dp.status === 'in-consultation'
+          );
+          
+          const waitTime = calculateWaitTime(p, doctorQueue, doctorAvgTime, isBusy);
+          return { ...p, estimatedWaitTime: waitTime };
+        });
+
+        set({ patients: updatedPatients });
       }
     } catch(e) {
       console.error("Failed to refresh queue", e);
     }
   },
 
+
   refreshDoctors: async () => {
     try {
       const { data: doctorsData } = await supabase.from('doctors').select('*');
       if (doctorsData) {
         set({ doctors: doctorsData.map(mapDoctor) });
+        // Recalculate wait times when doctors are updated (e.g. status or avg time changes)
+        get().refreshQueue();
       }
     } catch(e) {
       console.error("Failed to refresh doctors", e);
     }
   },
+
 
   // Register a new patient
   addPatient: async (patientData) => {

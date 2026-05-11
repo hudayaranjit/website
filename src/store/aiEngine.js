@@ -119,7 +119,7 @@ export const calculateAIPriority = (patient) => {
 /**
  * Predicts the waiting time for a patient based on the doctor's queue.
  */
-export const calculateWaitTime = (patient, queueForDoctor, doctorAvgConsultTime) => {
+export const calculateWaitTime = (patient, queueForDoctor, doctorAvgConsultTime, isDoctorBusy = false) => {
   if (patient.status === 'in-consultation') return 0;
   if (patient.status === 'completed' || patient.status === 'missed') return 0;
 
@@ -131,6 +131,13 @@ export const calculateWaitTime = (patient, queueForDoctor, doctorAvgConsultTime)
   // Baseline: Position * Avg Consult Time
   let estimatedTime = positionIndex * doctorAvgConsultTime;
 
+  // If the doctor is currently seeing someone, the first person in the waiting queue 
+  // still has to wait for the current consultation to finish. 
+  // We'll add the full avg consult time as a conservative estimate for the remaining time.
+  if (isDoctorBusy) {
+    estimatedTime += doctorAvgConsultTime;
+  }
+
   // Adjust for follow-ups being generally faster
   if (patient.visitType === 'follow-up') {
       estimatedTime = Math.max(0, estimatedTime - 5);
@@ -139,3 +146,4 @@ export const calculateWaitTime = (patient, queueForDoctor, doctorAvgConsultTime)
   // Cap minimum to avoid weird numbers
   return Math.max(estimatedTime, 0);
 };
+

@@ -14,17 +14,63 @@ const Reception = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const tempId = `pat-${Date.now()}`;
     await addPatient({
       ...formData,
+      id: tempId,
       age: parseInt(formData.age),
       arrivalTime: formData.arrivalTime
         ? new Date(formData.arrivalTime).toISOString()
         : new Date().toISOString(),
       appointmentType: 'walk-in'
     });
-    setLastToken('Submitted');
+    
+    setLastToken({
+      name: formData.name,
+      dept: formData.department,
+    });
     setFormData({ name: '', age: '', gender: 'Male', phone: '', symptoms: '', department: departments[0] || 'General Medicine', visitType: 'new', isEmergency: false, arrivalTime: '' });
   };
+
+  // Find the just-added patient in the store to show their real token/estimate
+  const submittedPatient = lastToken ? patients.find(p => p.name === lastToken.name && p.department === lastToken.dept) : null;
+
+  if (submittedPatient) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <div className="glass-card" style={{ maxWidth: '500px', width: '100%', padding: '3rem', textAlign: 'center', borderTop: `4px solid ${submittedPatient.priorityLevel === 'Critical' ? 'var(--critical)' : 'var(--primary)'}` }}>
+          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--success-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <CheckCircle size={40} color="var(--low)" />
+          </div>
+          <h2 style={{ marginBottom: '0.5rem' }}>Registration Successful</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Patient has been added to the AI-prioritized queue.</p>
+          
+          <div style={{ background: 'var(--border-subtle)', padding: '2rem', borderRadius: 'var(--radius-lg)', marginBottom: '2rem' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>PATIENT TOKEN</div>
+            <div style={{ fontSize: '3rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '2px', lineHeight: 1 }}>{submittedPatient.tokenNumber}</div>
+            <div style={{ marginTop: '1rem' }}>
+               <span className={`badge badge-${submittedPatient.priorityLevel.toLowerCase()}`}>{submittedPatient.priorityLevel} Priority</span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ textAlign: 'left', padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Estimated Wait</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>{submittedPatient.estimatedWaitTime}m</div>
+            </div>
+            <div style={{ textAlign: 'left', padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Position</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>#{patients.filter(p => p.assignedDoctorId === submittedPatient.assignedDoctorId && p.status === 'waiting').findIndex(p => p.id === submittedPatient.id) + 1}</div>
+            </div>
+          </div>
+
+          <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setLastToken(null)}>
+            Register Another Patient
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const setField = (key, value) => setFormData(f => ({ ...f, [key]: value }));
 
@@ -143,6 +189,7 @@ const Reception = () => {
             </button>
           </form>
         </div>
+
 
         {/* Info Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
