@@ -15,6 +15,7 @@ const mapPatient = (p) => ({
   priorityLevel: p.priority_level,
   aiExplanation: p.ai_explanation,
   estimatedWaitTime: p.estimated_wait_time,
+  confidence: p.confidence || 0,
 });
 
 const mapDoctor = (d) => ({
@@ -28,10 +29,25 @@ export const useStore = create((set, get) => ({
   patients: [],
   doctors: [],
   departments: [],
-  currentUserRole: null, // 'admin', 'doctor', 'reception', 'patient'
-  currentUserId: null,
   notifications: [],
   subscriptionsSet: false,
+
+  // Auth State
+  currentUserRole: null, // 'admin', 'doctor', 'reception', 'patient'
+  currentUserId: null,
+  isAuthenticated: false,
+
+  // --- Auth Actions ---
+  login: (role, id = null) => set({
+    currentUserRole: role,
+    currentUserId: id,
+    isAuthenticated: true,
+  }),
+  logout: () => set({
+    currentUserRole: null,
+    currentUserId: null,
+    isAuthenticated: false,
+  }),
 
   // --- Realtime Subscriptions ---
   setupRealtimeSubscriptions: () => {
@@ -88,11 +104,6 @@ export const useStore = create((set, get) => ({
       console.error("Failed to fetch initial data", e);
     }
   },
-
-
-  // --- Auth Actions ---
-  login: (role, id = null) => set({ currentUserRole: role, currentUserId: id }),
-  logout: () => set({ currentUserRole: null, currentUserId: null }),
 
   // --- Notifications ---
   addNotification: (message, type = 'info') => {
@@ -174,7 +185,7 @@ export const useStore = create((set, get) => ({
         }
       }
 
-      // Run the AI Triage Engine
+      // Run the Enhanced AI Triage Engine
       const aiResult = calculateAIPriority({
         ...patientData,
         arrivalTime: new Date().toISOString()
@@ -195,6 +206,7 @@ export const useStore = create((set, get) => ({
         priority_level: aiResult.level,
         priority_score: aiResult.score,
         ai_explanation: aiResult.explanation,
+        confidence: aiResult.confidence,
         status: 'waiting',
         assigned_doctor_id: assignedDocId || null
       };
@@ -202,7 +214,7 @@ export const useStore = create((set, get) => ({
       const { error } = await supabase.from('patients').insert([dbData]);
       if (error) throw error;
       
-      // We do NOT need to manually call set() here because our Realtime Subscription will detect the INSERT and refresh the queue automatically!
+      // Realtime Subscription will detect the INSERT and refresh the queue automatically
       
     } catch(e) {
       console.error("Failed to add patient", e);
