@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/store';
-import { UserPlus, Zap, CheckCircle, AlertOctagon, Clock, ArrowLeft, Sparkles } from 'lucide-react';
+import { UserPlus, Zap, CheckCircle, AlertOctagon, Clock, ArrowLeft, Sparkles, QrCode } from 'lucide-react';
+import { SelfRegisterQRModal } from '../components/SelfRegisterQRModal';
 
 const Reception = () => {
   const { addPatient, departments, patients } = useStore();
   const [lastToken, setLastToken] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '', age: '', gender: 'Male', phone: '',
@@ -97,15 +99,19 @@ const Reception = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: '4px', height: '28px', background: 'var(--low)', borderRadius: '4px' }} />
-          <h1>Reception Desk</h1>
+      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <div style={{ width: '4px', height: '28px', background: 'var(--low)', borderRadius: '4px' }} />
+            <h1>Reception Desk</h1>
+          </div>
+          <p style={{ color: 'var(--text-muted)', paddingLeft: '1rem', fontSize: '0.9rem' }}>
+            Register walk-in patients. AI engine automatically assigns priority and token.
+          </p>
         </div>
-        <p style={{ color: 'var(--text-muted)', paddingLeft: '1rem', fontSize: '0.9rem' }}>
-          Register walk-in patients. AI engine automatically assigns priority and token.
-        </p>
+        <button className="btn btn-outline" onClick={() => setIsQRModalOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <QrCode size={18} /> Show Self-Registration QR
+        </button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
@@ -290,6 +296,8 @@ const Reception = () => {
           </div>
         </div>
       </div>
+      
+      <SelfRegisterQRModal isOpen={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} />
     </div>
   );
 };

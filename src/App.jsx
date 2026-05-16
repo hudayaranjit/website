@@ -15,6 +15,7 @@ import PatientView from './pages/PatientView';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import SelfRegistration from './pages/SelfRegistration';
 
 const Layout = ({ children }) => (
   <div className="app-layout">
@@ -82,6 +83,9 @@ function App() {
         <Route path="/login" element={
           isAuthenticated ? <Navigate to={getDefaultRoute()} replace /> : <Login />
         } />
+        
+        {/* Public: Self Registration */}
+        <Route path="/self-register" element={<SelfRegistration />} />
         
         {/* Default redirect */}
         <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
