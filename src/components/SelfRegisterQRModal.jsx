@@ -1,5 +1,4 @@
 import React from 'react';
-import QRCode from 'react-qr-code';
 import { X, Smartphone } from 'lucide-react';
 import '../styles/components.css';
 
@@ -8,6 +7,7 @@ export const SelfRegisterQRModal = ({ isOpen, onClose }) => {
 
   // Assuming the app is hosted on the same origin
   const registerUrl = `${window.location.origin}/self-register`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(registerUrl)}`;
 
   return (
     <div style={{
@@ -35,7 +35,7 @@ export const SelfRegisterQRModal = ({ isOpen, onClose }) => {
         </p>
         
         <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--radius-lg)', display: 'inline-block', marginBottom: '1.5rem' }}>
-          <QRCode value={registerUrl} size={200} />
+          <img src={qrUrl} alt="QR Code" width={200} height={200} style={{ display: 'block' }} />
         </div>
         
         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', background: 'var(--border-subtle)', padding: '0.75rem', borderRadius: 'var(--radius-md)', wordBreak: 'break-all' }}>
