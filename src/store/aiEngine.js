@@ -35,6 +35,29 @@ const LOW_RISK_KEYWORDS = [
   'vaccination', 'physical exam', 'dry skin', 'eye strain', 'sneezing',
 ];
 
+const WHO_EPIDEMIC_KWS = [
+  'covid-19', 'crimean-congo haemorrhagic fever', 'ebola', 'marburg', 'lassa fever',
+  'mers-cov', 'severe acute respiratory syndrome', 'sars', 'nipah', 'henipaviral',
+  'rift valley fever', 'zika', 'disease x'
+];
+const WHO_BACTERIAL_CRITICAL_KWS = [
+  'carbapenem-resistant acinetobacter baumannii', 'carbapenem-resistant pseudomonas aeruginosa',
+  'carbapenem-resistant enterobacteriaceae', 'third-generation cephalosporin-resistant enterobacteriaceae'
+];
+const WHO_BACTERIAL_HIGH_KWS = [
+  'vancomycin-resistant enterococcus faecium', 'meticillin-resistant staphylococcus aureus',
+  'mrsa', 'clarithromycin-resistant helicobacter pylori', 'fluoroquinolone-resistant campylobacter',
+  'fluoroquinolone-resistant salmonellae', 'cephalosporin-resistant neisseria gonorrhoeae',
+  'fluoroquinolone-resistant neisseria gonorrhoeae'
+];
+const WHO_BACTERIAL_MEDIUM_KWS = [
+  'penicillin non-susceptible streptococcus pneumoniae', 'ampicillin-resistant haemophilus influenzae',
+  'macrolide-resistant streptococcus pneumoniae', 'group a streptococci'
+];
+const WHO_DIAGNOSTIC_PRIORITY_KWS = [
+  'hiv', 'tuberculosis', 'malaria', 'hepatitis b', 'hepatitis c', 'human papillomavirus', 'hpv', 'syphilis'
+];
+
 // --- Dangerous Symptom Combinations ---
 const DANGEROUS_COMBOS = [
   { keywords: ['chest pain', 'shortness of breath'], bonus: 40, label: 'Possible cardiac event' },
@@ -116,9 +139,43 @@ export const calculateAIPriority = (patient) => {
   if (symptomsLower.length > 0) {
     confidenceFactors++;
 
+    let whoMatches = [];
     let highMatches = [];
     let mediumMatches = [];
     let lowMatches = [];
+
+    const allWhoCritical = [...WHO_EPIDEMIC_KWS, ...WHO_BACTERIAL_CRITICAL_KWS];
+    allWhoCritical.forEach(kw => {
+      if (symptomsLower.includes(kw)) {
+        score += 100;
+        if (whoMatches.length === 0) reasons.push(`WHO Critical Priority Disease/Pathogen detected: ${kw}`);
+        whoMatches.push(kw);
+        matchedKeywords.push(kw);
+      }
+    });
+
+    const allWhoHigh = [...WHO_BACTERIAL_HIGH_KWS, ...WHO_DIAGNOSTIC_PRIORITY_KWS];
+    allWhoHigh.forEach(kw => {
+      if (symptomsLower.includes(kw)) {
+        score += 50;
+        if (whoMatches.length === 0) reasons.push(`WHO High Priority Disease/Pathogen detected: ${kw}`);
+        whoMatches.push(kw);
+        matchedKeywords.push(kw);
+      }
+    });
+
+    WHO_BACTERIAL_MEDIUM_KWS.forEach(kw => {
+      if (symptomsLower.includes(kw)) {
+        score += 20;
+        if (whoMatches.length === 0) reasons.push(`WHO Medium Priority Pathogen detected: ${kw}`);
+        whoMatches.push(kw);
+        matchedKeywords.push(kw);
+      }
+    });
+
+    if (whoMatches.length > 0) {
+      confidenceFactors++;
+    }
 
     HIGH_RISK_KEYWORDS.forEach(kw => {
       if (symptomsLower.includes(kw)) {

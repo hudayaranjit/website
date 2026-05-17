@@ -103,6 +103,29 @@ def calculate_ai_priority(patient: Patient) -> dict:
         reasons.append('Senior citizen priority')
 
     symptoms_lower = patient.symptoms.lower()
+    who_epidemic_kws = [
+        'covid-19', 'crimean-congo haemorrhagic fever', 'ebola', 'marburg', 'lassa fever',
+        'mers-cov', 'severe acute respiratory syndrome', 'sars', 'nipah', 'henipaviral',
+        'rift valley fever', 'zika', 'disease x'
+    ]
+    who_bacterial_critical_kws = [
+        'carbapenem-resistant acinetobacter baumannii', 'carbapenem-resistant pseudomonas aeruginosa',
+        'carbapenem-resistant enterobacteriaceae', 'third-generation cephalosporin-resistant enterobacteriaceae'
+    ]
+    who_bacterial_high_kws = [
+        'vancomycin-resistant enterococcus faecium', 'meticillin-resistant staphylococcus aureus',
+        'mrsa', 'clarithromycin-resistant helicobacter pylori', 'fluoroquinolone-resistant campylobacter',
+        'fluoroquinolone-resistant salmonellae', 'cephalosporin-resistant neisseria gonorrhoeae',
+        'fluoroquinolone-resistant neisseria gonorrhoeae'
+    ]
+    who_bacterial_medium_kws = [
+        'penicillin non-susceptible streptococcus pneumoniae', 'ampicillin-resistant haemophilus influenzae',
+        'macrolide-resistant streptococcus pneumoniae', 'group a streptococci'
+    ]
+    who_diagnostic_priority_kws = [
+        'hiv', 'tuberculosis', 'malaria', 'hepatitis b', 'hepatitis c', 'human papillomavirus', 'hpv', 'syphilis'
+    ]
+
     high_risk_kws = [
         'chest pain', 'breathing', 'bleeding', 'unconscious', 'seizure', 'severe pain',
         'stroke', 'heart attack', 'paralysis', 'nervous system changes', 'anaphylaxis', 'choking',
@@ -125,8 +148,30 @@ def calculate_ai_priority(patient: Patient) -> dict:
         'indigestion', 'heartburn', 'fatigue', 'acne', 'routine', 'prescription renewal'
     ]
 
+    matched_who = False
     matched_high = False
     matched_med = False
+
+    for kw in who_epidemic_kws + who_bacterial_critical_kws:
+        if kw in symptoms_lower:
+            score = score + 100
+            if not matched_who:
+                reasons.append(f'WHO Critical Priority Disease/Pathogen detected: {kw}')
+                matched_who = True
+
+    for kw in who_bacterial_high_kws + who_diagnostic_priority_kws:
+        if kw in symptoms_lower:
+            score = score + 50
+            if not matched_who:
+                reasons.append(f'WHO High Priority Disease/Pathogen detected: {kw}')
+                matched_who = True
+
+    for kw in who_bacterial_medium_kws:
+        if kw in symptoms_lower:
+            score = score + 20
+            if not matched_who:
+                reasons.append(f'WHO Medium Priority Pathogen detected: {kw}')
+                matched_who = True
 
     for kw in high_risk_kws:
         if kw in symptoms_lower:
